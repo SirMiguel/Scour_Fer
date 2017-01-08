@@ -31,6 +31,7 @@ def getAllLinks(page):
         url = link.get('href')
         #validate link\
         if isValidLink(url):
+            print(link.get('title'))
             links.append(url)
 
     return links
@@ -43,7 +44,7 @@ def isValidLink(url):
             return True
         except:
             logging.debug("Can't find website " + url)
-            print("Can't find website " + url)
+           # print("Can't find website " + url)
             pass
     return False
     # if link[:3] == "www" or link[:4] == "http" or link[:5] == "https":
