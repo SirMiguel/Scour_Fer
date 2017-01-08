@@ -1,4 +1,5 @@
 import urllib.request
+import logging
 import json
 import urllib.robotparser
 from bs4 import BeautifulSoup
@@ -11,7 +12,6 @@ def getPage(url):
         raise ValueError(urllib.Error.URLError)
 
 def getBody(url):
-   #pageBody = getPage(url)
     return bytes.decode(getPage(url).read())
 
 
@@ -28,12 +28,25 @@ def getAllLinks(page):
     links = []
     soup = BeautifulSoup(page, 'html.parser')
     for link in soup.find_all('a'):
-        link = link.get('href')
-        #validate link
-        if link is not None:
-            if link[:3] == "www" or link[:4] == "http" or link[:5] == "https":
-             links.append(link)
+        url = link.get('href')
+        #validate link\
+        if isValidLink(url):
+            links.append(url)
+
     return links
+
+
+def isValidLink(url):
+    if url is not None:
+        try:
+            getPage(url)
+            return True
+        except:
+            logging.debug("Can't find website " + url)
+            print("Can't find website " + url)
+            pass
+    return False
+    # if link[:3] == "www" or link[:4] == "http" or link[:5] == "https":
 
 
 def crawlWeb(seed, maxDepth):
@@ -48,8 +61,8 @@ def crawlWeb(seed, maxDepth):
             try:
                 pageBody = getBody(page)
             except:
-                pageBody = ""
                 pass
+
             #nextDepth = getAllLinks(pageBody)
             #nextDepth.extend(getAllLinks(pageBody))
             union(nextDepth, getAllLinks(pageBody)) #Adds all the links of that page to the next depth of pages to crawl
@@ -72,7 +85,7 @@ def read_index():
 #http://www.boddie.org.uk/python/HTML.html
 
 seed = "https://jeffknupp.com/blog/2014/09/01/what-is-a-nosql-database-learn-by-writing-one-in-python/"  #either to be a list or just one website
-links = crawlWeb(seed, 2)
+links = crawlWeb(seed, 1)
 print(links)
 print(links.__len__())
 
