@@ -4,14 +4,15 @@ import urllib.robotparser
 from bs4 import BeautifulSoup
 
 
-
-def getBody(url):
-    pageBody = ""
+def getPage(url):
     try:
-        pageBody = urllib.request.urlopen(url)
+        return urllib.request.urlopen(url)
     except:
         raise ValueError(urllib.Error.URLError)
-    return bytes.decode(pageBody.read())
+
+def getBody(url):
+   #pageBody = getPage(url)
+    return bytes.decode(getPage(url).read())
 
 
 def union(toBeJoined, toJoin):
@@ -28,19 +29,12 @@ def getAllLinks(page):
     soup = BeautifulSoup(page, 'html.parser')
     for link in soup.find_all('a'):
         link = link.get('href')
-        #if link[:3] == "www" or link[:4] == "http" or link[:5] == "https":
-        links.append(link)
-        #links.append()
+        #validate link
+        if link is not None:
+            if link[:3] == "www" or link[:4] == "http" or link[:5] == "https":
+             links.append(link)
     return links
 
-"""print(page)
-   while page:
-       url,endPos = getNextTarget(page)
-        if url:
-           links.append(url)
-           page = page[endPos :]
-        else:
-            break"""
 
 def crawlWeb(seed, maxDepth):
     toCrawl = [seed]
@@ -85,16 +79,3 @@ print(links.__len__())
 
 
 
-
-
-
-"""def getNextTarget(page):
-    startLink = page.find('http://')
-
-    if startLink == -1:
-        return None, 0
-  #  startQuote = page.find('"', startLink)
-    endQuote = page.find('"', startLink + 1)
-    url = page[startLink : endQuote]
-    return url, endQuote
-"""
