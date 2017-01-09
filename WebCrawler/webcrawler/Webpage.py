@@ -2,6 +2,8 @@ import urllib.request
 from bs4 import BeautifulSoup
 import logging
 
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
 
 class Webpage:
     url = ""
@@ -21,7 +23,7 @@ class Webpage:
 
     #Gets the body of the webpage (from the given url)
     def getBody(self):
-        return bytes.decode(self.openURL(self.url).read())
+        self.body = bytes.decode(self.openURL(self.url).read())
 
     #validates whether a supplied link is a valid url
     def isValidLink(self, url):
@@ -35,17 +37,22 @@ class Webpage:
                 pass
         return False
 
-    #gets all the links of the current webpage
     def getAllLinks(self):
-        # Gets all the links from a supplied page
+        # gets all the links of the current webpage
         # NOTE: As of yet not all links gathered are legit links, as it only gathers the href: part of any anchor tag
         soup = BeautifulSoup(self.body, 'html.parser')
         for link in soup.find_all('a'):
             url = link.get('href')
-            # validate link\
+            # validate link
             if self.isValidLink(url):
                 print(link.get('title'))
                 self.links.append(url)
+        return self.links
 
-   # def getMetaTags(self):
+    def getMetaTags(self):
+        soup = BeautifulSoup(self.body, 'html.parser')
+        for tag in soup.find_all('meta'):
+            keyword = tag.get('content')
+            print(keyword)
+            self.keywords.append(keyword)
 

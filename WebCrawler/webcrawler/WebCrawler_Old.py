@@ -1,9 +1,8 @@
-import urllib.request
+"""import urllib.request
 import logging
 import json
 import urllib.robotparser
 from bs4 import BeautifulSoup
-
 
 def getPage(url):
     try:
@@ -16,7 +15,7 @@ def getBody(url):
 
 
 def union(toBeJoined, toJoin):
-    """To be joined refers the array where elements are appended to from to the toJoin array"""
+    #To be joined refers the array where elements are appended to from to the toJoin array
     for element in toJoin:
         if element not in toBeJoined:
             toBeJoined.extend(toJoin)
@@ -89,7 +88,5 @@ seed = "https://jeffknupp.com/blog/2014/09/01/what-is-a-nosql-database-learn-by-
 links = crawlWeb(seed, 1)
 print(links)
 print(links.__len__())
-
-
-
+"""
 

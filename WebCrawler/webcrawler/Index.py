@@ -1,4 +1,4 @@
-from WebCrawler import Record
+from WebCrawler.webcrawler import Record
 
 
 class Index:
