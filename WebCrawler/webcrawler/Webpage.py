@@ -37,6 +37,7 @@ class Webpage:
                 pass
         return False
 
+
     def getAllLinks(self):
         # gets all the links of the current webpage
         # NOTE: As of yet not all links gathered are legit links, as it only gathers the href: part of any anchor tag
@@ -48,6 +49,11 @@ class Webpage:
                 print(link.get('title'))
                 self.links.append(url)
         return self.links
+
+
+    def getKeywords(self):
+        self.keywords.extend(self.getMetaTags())
+
 
     def getMetaTags(self):
         soup = BeautifulSoup(self.body, 'html.parser')

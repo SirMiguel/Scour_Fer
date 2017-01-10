@@ -1,3 +1,49 @@
+from .Webpage import Webpage
+
+class WebCrawler:
+    toCrawl = []
+    crawled = []  # where I wanna load up the current index and get websites already indexed
+    nextDepth = []
+    currentDepth = 0
+
+    def __init__(self, seed):
+        toCrawl = self.add_webpages(seed)
+
+
+    """To be joined refers the array where elements are appended to from to the toJoin array"""
+    def union(toBeJoined, toJoin):
+        for element in toJoin:
+            if element not in toBeJoined:
+                toBeJoined.extend(toJoin)
+
+    def add_webpages(self, urls):
+        webpages = []
+        for url in urls:
+            webpages.append(Webpage.Webpage(url))
+        return webpages
+
+    def crawlWeb(self, seed, maxDepth):
+        while self.toCrawl and self.currentDepth <= maxDepth:
+            page = self.toCrawl.pop()  # poping the seed from the list
+
+            if page.url not in self.crawled:
+                try:
+                    page.getBody()
+                except:
+                    pass
+                page.getAllLinks()
+                self.union(self.nextDepth, self.add_webpages(page.links))
+
+                self.crawled.append(page.url)
+
+            if not self.toCrawl:
+                self.toCrawl.extend(self.nextDepth)
+                self.nextDepth = []
+                self.currentDepth += 1
+
+        return self.crawled
+
+
 """from . import Webpage
 
 from pathlib import Path
