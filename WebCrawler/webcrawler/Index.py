@@ -2,8 +2,6 @@ from WebCrawler.webcrawler import Record
 
 
 class Index:
-    records = []
-
     def __init__(self, records):
         self.records = records
 

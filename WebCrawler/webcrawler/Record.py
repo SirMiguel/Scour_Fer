@@ -1,7 +1,4 @@
 class Record:
-    keyword = ""
-    websites_ref = []
-
     def __init__(self, keyword, websites_ref):
         self.keyword = keyword
         self.websites_ref = websites_ref
