@@ -12,11 +12,22 @@ class Webpage:
 
     def getKeywords(self):
         self.keywords.extend(self.getMetaTags())
+        self.keywords.extend(self.getTitle())
+
+
+    def getTitle(self):
+        titles = []
+        soup = BeautifulSoup(self.body, 'html.parser')
+        for tag in soup.find_all('title'):
+            keyword = tag.get("")
+            titles.append(keyword)
+        return titles
+
 
     def getMetaTags(self):
+        metatags =[]
         soup = BeautifulSoup(self.body, 'html.parser')
         for tag in soup.find_all('meta'):
             keyword = tag.get('content')
-            print(keyword)
-            self.keywords.append(keyword)
-
+            metatags.append(keyword)
+        return metatags
