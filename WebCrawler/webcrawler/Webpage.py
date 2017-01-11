@@ -6,9 +6,9 @@ print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resol
 class Webpage:
     def __init__(self, url):
         self.url = url
-        body = ""
-        keywords = []
-        links = []
+        self.body = ""
+        self.keywords = []
+        self.links = []
 
     def getKeywords(self):
         self.keywords.extend(self.getMetaTags())

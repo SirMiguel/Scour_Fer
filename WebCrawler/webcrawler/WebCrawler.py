@@ -3,15 +3,12 @@ from bs4 import BeautifulSoup
 import urllib.request
 import logging
 
-
 class WebCrawler:
-    toCrawl = []
-    crawled = []  # where I wanna load up the current index and get websites already indexed
-    nextDepth = []
-    currentDepth = 0
-
     def __init__(self, seed):
         self.toCrawl = self.addWebpages(seed)
+        self.crawled = []
+        self.nextDepth = []
+        self.currentDepth = 0
 
     def addWebpages(self, urls):
         webpages = []
@@ -51,7 +48,7 @@ class WebCrawler:
     def getAllLinks(self, webpage):
         # gets all the links of the current webpage
         # NOTE: As of yet not all links gathered are legit links, as it only gathers the href: part of any anchor tag
-        soup = BeautifulSoup(self.getBody(webpage.url), 'html.parser')
+        soup = BeautifulSoup(webpage.body, 'html.parser')
         for link in soup.find_all('a'):
             url = link.get('href')
             # validate link
