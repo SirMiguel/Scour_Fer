@@ -10,12 +10,15 @@ class Webpage:
         self.keywords = []
         self.links = []
 
-    def getKeywords(self):
+
+
+    def harvestKeywords(self):
         self.keywords.extend(self.getMetaTags())
         self.keywords.extend(self.getTitle())
 
 
     def getTitle(self):
+        self.htmlSouper()
         titles = []
         soup = BeautifulSoup(self.body, 'html.parser')
         for tag in soup.find_all('title'):
@@ -24,10 +27,6 @@ class Webpage:
         return titles
 
 
-    def getMetaTags(self):
-        metatags =[]
-        soup = BeautifulSoup(self.body, 'html.parser')
-        for tag in soup.find_all('meta'):
-            keyword = tag.get('content')
-            metatags.append(keyword)
-        return metatags
+
+
+

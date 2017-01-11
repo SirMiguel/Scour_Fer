@@ -58,6 +58,21 @@ class WebCrawler:
                 links.append(url)
         return links
 
+    def findTags(self, toSoup, tag):
+        soup = BeautifulSoup(toSoup, 'html.parser')
+        return soup.find_all(tag)
+
+    def getProperties(self, toSoup, tag, property):
+        found = []
+        soup = BeautifulSoup(toSoup, 'html.parser')
+        for item in soup.find_all(tag):
+            found.append(item.get(property))
+        return found
+
+    #gets the title of a webpage from the tag
+    def getKeywordsTag(self, body):
+        return body[body.find("<title>") + 7 : body.find("</title>")]
+
     def crawlWeb(self, maxDepth):
         while self.toCrawl and self.currentDepth <= maxDepth:
             currentPage = Webpage(self.toCrawl.pop())  # popping the seed from the list
@@ -65,7 +80,7 @@ class WebCrawler:
             if currentPage.url not in self.crawled:
                 currentPage.body = self.getBody(currentPage.url)
                 currentPage.links = self.getAllLinks(currentPage.body)
-                currentPage.keywords = currentPage.getMetaTags()
+                currentPage.keywords = self.getKeywordsTag(currentPage.body)
                 print(currentPage.url)
                 print(currentPage.keywords)
                 print("\n\n\n\n")
