@@ -4,11 +4,17 @@ from pathlib import Path
 print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
 
 class Webpage:
-    def __init__(self, url):
-        self.url = url
-        self.body = ""
-        self.keywords = []
-        self.links = []
+    def __init__(self, url, keywords):
+        if (keywords is None):
+            self.url = url
+            self.body = ""
+            self.keywords = []
+            self.links = []
+        else:
+            self.url = url
+            self.body = ""
+            self.keywords = keywords
+            self.links = []
 
 
 
