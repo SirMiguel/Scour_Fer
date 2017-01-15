@@ -45,8 +45,8 @@ class WebCrawler:
                 toBeJoined.extend(toJoin)
 
     def crawlLinks(self, webpage):
-        # gets all the links of the current webpage
-        # NOTE: As of yet not all links gathered are legit links, as it only gathers the href: part of any anchor tag
+        # For the webpage supplied a list of links with the type of Webpage is returned, containing the URL and associated keywords linking it to this the supplied webpage
+        # NOTE: Note all links gathered are validated at this point to ensure only legit links are added (rather slow, but I think worth it)
         links = []
         soup = BeautifulSoup(webpage.body, 'html.parser')
         for link in soup.find_all('a'):
@@ -58,7 +58,7 @@ class WebCrawler:
                 links.append(Webpage(url, list(filter(None, keywords))))
         return links
 
-        # gets the title of a webpage from the tag
+    #gets the title of a webpage from the tag
     def getInTag(self, body, startTag, endTag):
         return body[body.find(startTag) + len(startTag): body.find(endTag)]
 
@@ -66,7 +66,7 @@ class WebCrawler:
         while self.toCrawl and self.currentDepth <= maxDepth:
             currentPage = self.toCrawl.pop()# popping the seed from the list
 
-            if currentPage.url not in self.crawled:
+            if currentPage not in self.crawled:
                 currentPage.body = self.getBody(currentPage.url)
 
                 try:
@@ -74,7 +74,7 @@ class WebCrawler:
                 except TypeError:
                     logging.log(0, 'No title found in ', currentPage.url)
 
-                currentPage.links = self.crawlLinks(currentPage)
+                currentPage.links = self.crawlLinks(currentPage) #Creates a list of webpage objects
 
                 print(currentPage.url)
                 print(currentPage.keywords)
@@ -87,5 +87,8 @@ class WebCrawler:
                 self.toCrawl.extend(self.nextDepth)
                 self.nextDepth = []
                 self.currentDepth += 1
+
+
+
 
         return self.crawled
