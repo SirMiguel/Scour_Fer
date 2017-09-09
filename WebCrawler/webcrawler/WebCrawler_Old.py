@@ -1,92 +1,52 @@
-"""import urllib.request
-import logging
+import urllib.request
+from urllib.error import HTTPError
 import json
 import urllib.robotparser
-from bs4 import BeautifulSoup
+import re
 
 def getPage(url):
-    try:
-        return urllib.request.urlopen(url)
-    except:
-        raise ValueError(urllib.Error.URLError)
+    pageBodyBytes = urllib.request.urlopen(url).read()
+    return bytes.decode(pageBodyBytes)
 
-def getBody(url):
-    return bytes.decode(getPage(url).read())
+def can_page_be_read(url):
+    roboto = urllib.robotparser.RobotFileParser(url)
+    roboto.read()
+    return roboto.can_fetch("*", url)
 
+def get_all_links(page):
+    return set(re.findall(r'http://[a-zA-Z0-9\.]*\.[a-z]{2,}', page)) # find all urls in the content
 
-def union(toBeJoined, toJoin):
-    #To be joined refers the array where elements are appended to from to the toJoin array
-    for element in toJoin:
-        if element not in toBeJoined:
-            toBeJoined.extend(toJoin)
-
-
-def getAllLinks(page):
-    #Gets all the links from a supplied page
-    #NOTE: As of yet not all links gathered are legit links, as it only gathers the href: part of any anchor tag
-    links = []
-    soup = BeautifulSoup(page, 'html.parser')
-    for link in soup.find_all('a'):
-        url = link.get('href')
-        #validate link\
-        if isValidLink(url):
-            print(link.get('title'))
-            links.append(url)
-
-    return links
-
-
-def isValidLink(url):
-    if url is not None:
-        try:
-            getPage(url)
-            return True
-        except:
-            logging.debug("Can't find website " + url)
-           # print("Can't find website " + url)
-            pass
-    return False
-    # if link[:3] == "www" or link[:4] == "http" or link[:5] == "https":
-
-
-def crawlWeb(seed, maxDepth):
-    toCrawl = [seed]
+def crawl_web(seed, depth_interations):
+    toCrawl = seed
     crawled = [] #where I wanna load up the current index and get websites already indexed
     nextDepth = []
-    currentDepth = 0
-    while toCrawl and currentDepth <= maxDepth:
+    while len(toCrawl) > 0 and depth_interations >= 0:
         page = toCrawl.pop() #poping the seed from the list
-
-        if page not in crawled:
+        if not crawled.__contains__(page):
+            print("page", page)
             try:
-                pageBody = getBody(page)
-            except:
+                pageBody = getPage(page)
+                if can_page_be_read(page):
+                    all_links_from_page = get_all_links(pageBody)
+                    print("Links from", page, ":", all_links_from_page)
+                    nextDepth.extend(all_links_from_page)
+                crawled.append(page)
+            except HTTPError:
                 pass
 
-            #nextDepth = getAllLinks(pageBody)
-            #nextDepth.extend(getAllLinks(pageBody))
-            union(nextDepth, getAllLinks(pageBody)) #Adds all the links of that page to the next depth of pages to crawl
-            crawled.append(page)
-
         if not toCrawl:
-            toCrawl.extend(nextDepth)
-            nextDepth = []
-            currentDepth += 1
-
+            toCrawl = nextDepth.copy()
+            nextDepth.clear()
+            depth_interations -= 1
     return crawled
 
 def read_index():
     return json.load(open('index.json'))
 
-#def save_index():
-#    json.dump(index)
+def save_index(index):
+    json.dump(index)
 
 #index = read_index()
-#http://www.boddie.org.uk/python/HTML.html
 
-seed = "https://jeffknupp.com/blog/2014/09/01/what-is-a-nosql-database-learn-by-writing-one-in-python/"  #either to be a list or just one website
-links = crawlWeb(seed, 1)
-print(links)
-print(links.__len__())
-"""
-
+seed = ["http://www.boddie.org.uk/python/HTML.html"] #either to be a list or just one website
+print(crawl_web(seed, 5))

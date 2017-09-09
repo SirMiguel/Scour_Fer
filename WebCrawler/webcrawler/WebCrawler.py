@@ -11,11 +11,13 @@ class WebCrawler:
         self.nextDepth = []
         self.currentDepth = 0
 
+
     def addWebpages(self, urls):
         webpages = []
         for url in urls:
             webpages.append(Webpage(url, None))
         return webpages
+
 
     # gets the current webpage
     def openURL(self, url):
@@ -43,6 +45,7 @@ class WebCrawler:
         for element in toJoin:
             if element not in toBeJoined:
                 toBeJoined.extend(toJoin)
+
 
     def crawlLinks(self, webpage):
         # For the webpage supplied a list of links with the type of Webpage is returned, containing the URL and associated keywords linking it to this the supplied webpage
@@ -87,8 +90,4 @@ class WebCrawler:
                 self.toCrawl.extend(self.nextDepth)
                 self.nextDepth = []
                 self.currentDepth += 1
-
-
-
-
         return self.crawled
